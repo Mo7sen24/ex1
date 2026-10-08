@@ -1,689 +1,849 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sam & Sofia | Wedding Invitation</title>
-  
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Google Fonts -->
+  <title>دعوة زفاف Sam & Sofia</title>
+
+  <!-- Google Fonts & Font Awesome -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400;1,600&family=Great+Vibes&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cinzel:wght@400;600;700&family=Montserrat:wght@300;400;500;600&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
   <!-- Canvas Confetti Library -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-  <!-- Tailwind Custom Colors Configuration -->
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            burgundy: {
-              DEFAULT: '#5A0E17',
-              dark: '#3D070E',
-              light: '#7A1823',
-              accent: '#8C1C29',
-            },
-            cream: {
-              DEFAULT: '#FAF7F2',
-              soft: '#F4EFE6',
-              dark: '#E8E1D3',
-            },
-            gold: {
-              DEFAULT: '#C5A059',
-              light: '#E6CA85',
-              dark: '#9A7730',
-            }
-          },
-          fontFamily: {
-            serif: ['Cormorant Garamond', 'serif'],
-            script: ['Great Vibes', 'cursive'],
-            sans: ['Montserrat', 'sans-serif'],
-          }
-        }
-      }
-    }
-  </script>
-
   <style>
-    /* Custom Scrollbar */
-    ::-webkit-scrollbar {
-      width: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #FAF7F2;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #C5A059;
-      border-radius: 3px;
+    :root {
+      --bg-color: #F8F5F0;
+      --burgundy: #581825;
+      --burgundy-light: #7A2433;
+      --gold: #D4AF37;
+      --gold-dark: #AA820A;
+      --text-dark: #2B2B2B;
+      --text-muted: #6B6B6B;
     }
 
-    /* Curtain Animations */
-    .curtain-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 100;
-      pointer-events: none;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-dark);
+      font-family: 'Montserrat', 'Cairo', sans-serif;
+      overflow-x: hidden;
       display: flex;
+      justify-content: center;
+    }
+
+    /* Main Container with Mobile Aspect Ratio Feel */
+    .app-container {
+      width: 100%;
+      max-width: 480px;
+      min-height: 100vh;
+      background-color: #FAFAFA;
+      position: relative;
+      box-shadow: 0 0 30px rgba(0,0,0,0.1);
       overflow: hidden;
     }
 
-    .curtain-panel {
-      width: 50vw;
+    /* =========================================
+       THEATER CURTAIN OVERLAY (Upward Pulling)
+       ========================================= */
+    #curtain-overlay {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 480px;
       height: 100vh;
-      background-color: #5A0E17;
-      background-image: repeating-linear-gradient(
-        90deg,
-        #3D070E,
-        #3D070E 15px,
-        #5A0E17 15px,
-        #5A0E17 35px,
-        #7A1823 35px,
-        #7A1823 50px
-      );
-      box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.8);
-      transition: transform 2.2s cubic-bezier(0.77, 0, 0.175, 1);
-      position: relative;
-    }
-
-    .curtain-panel.left {
-      transform-origin: left center;
-      border-right: 2px solid #C5A059;
-    }
-
-    .curtain-panel.right {
-      transform-origin: right center;
-      border-left: 2px solid #C5A059;
-    }
-
-    .curtains-open .curtain-panel.left {
-      transform: translateX(-100%);
-    }
-
-    .curtains-open .curtain-panel.right {
-      transform: translateX(100%);
-    }
-
-    /* Gold Gradient Canvas overlay look */
-    .scratch-canvas {
-      touch-action: none;
+      z-index: 9999;
       cursor: pointer;
+      overflow: hidden;
+      display: flex;
+      justify-content: space-between;
+      transition: opacity 0.8s ease 1.2s, visibility 0.8s ease 1.2s;
     }
 
-    /* Card Border Scallop Pattern */
-    .border-scallop {
-      border: 1px solid #C5A059;
-      outline: 4px solid #FAF7F2;
-      outline-offset: -8px;
+    /* Left and Right Curtains */
+    .curtain-half {
+      width: 50.5%;
+      height: 100%;
+      background: linear-gradient(90deg, #3B0C15 0%, #601A27 40%, #45111B 70%, #601A27 100%);
+      position: relative;
+      transition: transform 1.4s cubic-bezier(0.77, 0, 0.175, 1);
+      box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.8);
     }
 
-    /* Smooth Fade In */
-    .fade-up {
+    .curtain-left {
+      transform-origin: top left;
+      border-right: 2px solid var(--gold);
+    }
+
+    .curtain-right {
+      transform-origin: top right;
+      border-left: 2px solid var(--gold);
+    }
+
+    /* Vertical Drapes Effect */
+    .curtain-half::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        90deg,
+        rgba(0,0,0,0.3) 0px,
+        transparent 15px,
+        rgba(255,255,255,0.08) 30px,
+        rgba(0,0,0,0.4) 45px
+      );
+    }
+
+    /* Curtain Swag / Valance at Top */
+    .curtain-valance {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 120px;
+      background: linear-gradient(180deg, #3B0C15 0%, #601A27 100%);
+      z-index: 10000;
+      border-bottom: 3px solid var(--gold);
+      border-radius: 0 0 50% 50% / 0 0 30px 30px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+      transition: transform 1.2s cubic-bezier(0.77, 0, 0.175, 1);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .tap-hint {
+      color: #FFF;
+      font-family: 'Cinzel', serif;
+      font-size: 0.9rem;
+      letter-spacing: 2px;
+      position: absolute;
+      bottom: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10001;
+      text-transform: uppercase;
+      animation: pulse 1.8s infinite;
+      text-align: center;
+      width: 100%;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; transform: translateX(-50%) scale(0.98); }
+      50% { opacity: 1; transform: translateX(-50%) scale(1.05); }
+    }
+
+    /* OPENED STATE (Curtains pulled UP & AWAY) */
+    #curtain-overlay.open .curtain-left {
+      transform: translateY(-100%) scaleY(0.5);
+    }
+
+    #curtain-overlay.open .curtain-right {
+      transform: translateY(-100%) scaleY(0.5);
+    }
+
+    #curtain-overlay.open .curtain-valance {
+      transform: translateY(-120%);
+    }
+
+    #curtain-overlay.open {
       opacity: 0;
-      transform: translateY(30px);
-      transition: opacity 1s ease, transform 1s ease;
+      visibility: hidden;
     }
 
-    .fade-up.visible {
+    /* =========================================
+       MAIN CONTENT STYLING
+       ========================================= */
+    .content {
+      padding: 40px 24px;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 1s ease 0.5s;
+    }
+
+    .app-container.active .content {
       opacity: 1;
       transform: translateY(0);
     }
+
+    /* Typography */
+    .subtitle-small {
+      font-size: 0.75rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--burgundy);
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    .couple-names {
+      font-family: 'Alex Brush', cursive;
+      font-size: 3.5rem;
+      color: var(--burgundy);
+      line-height: 1.2;
+      margin: 15px 0;
+    }
+
+    .invitation-text {
+      font-size: 0.8rem;
+      line-height: 1.8;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      margin-bottom: 40px;
+      text-transform: uppercase;
+    }
+
+    /* Decorative Divider */
+    .divider {
+      width: 60px;
+      height: 1px;
+      background-color: var(--gold);
+      margin: 30px auto;
+      position: relative;
+    }
+
+    .divider::after {
+      content: '◆';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #FAFAFA;
+      padding: 0 8px;
+      color: var(--gold);
+      font-size: 0.6rem;
+    }
+
+    /* =========================================
+       SCRATCH CARD SECTION (Reveal Date)
+       ========================================= */
+    .section-title-cursive {
+      font-family: 'Alex Brush', cursive;
+      font-size: 2.5rem;
+      color: var(--burgundy);
+      margin-bottom: 5px;
+    }
+
+    .section-subtitle {
+      font-size: 0.65rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 25px;
+    }
+
+    .scratch-container {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .scratch-box {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      position: relative;
+      background: #FFF;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(212, 175, 55, 0.3);
+    }
+
+    .scratch-value {
+      font-family: 'Cinzel', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--burgundy);
+    }
+
+    .scratch-label {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .scratch-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      cursor: pointer;
+      touch-action: none;
+    }
+
+    /* =========================================
+       COUNTDOWN TIMER
+       ========================================= */
+    .countdown-title {
+      font-family: 'Alex Brush', cursive;
+      font-size: 2.2rem;
+      color: var(--burgundy);
+      margin-top: 20px;
+    }
+
+    .timer-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .timer-box {
+      border: 1px solid #E5E5E5;
+      padding: 12px 5px;
+      border-radius: 4px;
+      background-color: #FFF;
+    }
+
+    .timer-number {
+      font-family: 'Cinzel', serif;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--burgundy);
+    }
+
+    .timer-label {
+      font-size: 0.55rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* =========================================
+       VENUE & EVENT DETAILS
+       ========================================= */
+    .venue-card {
+      margin: 30px 0;
+      padding: 20px;
+      background: #FFF;
+      border: 1px solid #EAEAEA;
+      border-radius: 8px;
+    }
+
+    .venue-illustration {
+      width: 100%;
+      max-width: 200px;
+      margin: 0 auto 15px;
+      opacity: 0.85;
+    }
+
+    .venue-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.1rem;
+      color: var(--burgundy);
+      margin-bottom: 8px;
+    }
+
+    .venue-address {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* =========================================
+       MENU SECTION
+       ========================================= */
+    .menu-box {
+      border: 2px solid var(--burgundy);
+      padding: 25px 15px;
+      border-radius: 6px;
+      margin: 30px 0;
+      position: relative;
+    }
+
+    .menu-item {
+      margin-bottom: 18px;
+    }
+
+    .menu-item-title {
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--burgundy);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .menu-item-desc {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* =========================================
+       DRESS CODE & GIFTS
+       ========================================= */
+    .dress-code-img {
+      width: 100%;
+      max-width: 280px;
+      margin: 15px auto;
+      display: block;
+    }
+
+    .bank-box {
+      background-color: #FFF;
+      border: 1px dashed var(--gold);
+      padding: 15px;
+      text-align: right;
+      direction: ltr;
+      font-size: 0.75rem;
+      margin-top: 15px;
+      border-radius: 4px;
+    }
+
+    /* =========================================
+       RSVP FORM
+       ========================================= */
+    .rsvp-form {
+      background: #FFF;
+      padding: 25px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+      border: 1px solid #EAEAEA;
+      margin-top: 20px;
+      text-align: right;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--burgundy);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #DDD;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      outline: none;
+      transition: border 0.3s;
+    }
+
+    .form-control:focus {
+      border-color: var(--burgundy);
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-radio {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #DDD;
+      border-radius: 4px;
+      text-align: center;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-radio.active {
+      background-color: var(--burgundy);
+      color: #FFF;
+      border-color: var(--burgundy);
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 12px;
+      background-color: var(--burgundy);
+      color: #FFF;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.3s;
+      margin-top: 10px;
+    }
+
+    .btn-submit:hover {
+      background-color: var(--burgundy-light);
+    }
+
+    /* Footer / Thank You Card */
+    .thank-you-card {
+      background-color: var(--burgundy);
+      color: #FFF;
+      padding: 30px 20px;
+      border-radius: 8px;
+      margin-top: 40px;
+    }
+
+    .thank-you-card h3 {
+      font-family: 'Alex Brush', cursive;
+      font-size: 2.5rem;
+      color: var(--gold);
+    }
+
+    .thank-you-card p {
+      font-size: 0.75rem;
+      margin-top: 10px;
+      opacity: 0.9;
+      line-height: 1.6;
+    }
   </style>
 </head>
+<body>
 
-<body class="bg-cream text-burgundy-dark font-serif antialiased overflow-x-hidden selection:bg-gold selection:text-white">
+  <div class="app-container" id="app">
 
-  <!-- Curtain Theater Overlay -->
-  <div id="curtainOverlay" class="curtain-container">
-    <div class="curtain-panel left flex items-center justify-end pr-4 sm:pr-10">
-      <div class="text-gold opacity-80 text-right transform -rotate-90 hidden sm:block font-script text-3xl">
-        Press to Open
+    <!-- CURTAIN OVERLAY -->
+    <div id="curtain-overlay" onclick="openCurtain()">
+      <div class="curtain-valance">
+        <span style="color: var(--gold); font-family: 'Cinzel'; font-size: 0.8rem; letter-spacing: 3px;">WEDDING INVITATION</span>
+      </div>
+      <div class="curtain-half curtain-left"></div>
+      <div class="curtain-half curtain-right"></div>
+      <div class="tap-hint">
+        <i class="fa-solid fa-envelope-open" style="margin-bottom: 8px; font-size: 1.2rem;"></i><br>
+        انقر هنا لفتح الدعوة
       </div>
     </div>
-    <div class="curtain-panel right flex items-center justify-start pl-4 sm:pl-10">
-      <div class="text-gold opacity-80 text-left transform rotate-90 hidden sm:block font-script text-3xl">
-        Press to Open
+
+    <!-- MAIN INVITATION CONTENT -->
+    <div class="content">
+
+      <!-- Header Section -->
+      <div class="subtitle-small">You are cordially invited to celebrate the wedding of</div>
+      <h1 class="couple-names">Sam & Sofia</h1>
+      <p class="invitation-text">
+        يسعدنا دعوتكم لمشاركتنا أجمل لحظات حياتنا<br>
+        حضوركم يكتمل به فرحنا
+      </p>
+
+      <div class="divider"></div>
+
+      <!-- Scratch to Reveal Date -->
+      <div class="section-title-cursive">Reveal</div>
+      <div class="section-subtitle">امسح الكروت لاكتشاف التاريخ</div>
+
+      <div class="scratch-container">
+        <!-- Scratch Box 1: Day -->
+        <div class="scratch-box">
+          <span class="scratch-value">10</span>
+          <span class="scratch-label">اليوم</span>
+          <canvas class="scratch-canvas" id="canvas1"></canvas>
+        </div>
+        <!-- Scratch Box 2: Month -->
+        <div class="scratch-box">
+          <span class="scratch-value">Sept</span>
+          <span class="scratch-label">الشهر</span>
+          <canvas class="scratch-canvas" id="canvas2"></canvas>
+        </div>
+        <!-- Scratch Box 3: Year -->
+        <div class="scratch-box">
+          <span class="scratch-value">2027</span>
+          <span class="scratch-label">السنة</span>
+          <canvas class="scratch-canvas" id="canvas3"></canvas>
+        </div>
       </div>
+
+      <!-- Countdown Section -->
+      <div class="countdown-title">Countdown</div>
+      <div class="section-subtitle" style="margin-bottom: 10px;">المتبقي على اليوم الكبير</div>
+      
+      <div class="timer-grid">
+        <div class="timer-box">
+          <div class="timer-number" id="days">00</div>
+          <div class="timer-label">يوم</div>
+        </div>
+        <div class="timer-box">
+          <div class="timer-number" id="hours">00</div>
+          <div class="timer-label">ساعة</div>
+        </div>
+        <div class="timer-box">
+          <div class="timer-number" id="minutes">00</div>
+          <div class="timer-label">دقيقة</div>
+        </div>
+        <div class="timer-box">
+          <div class="timer-number" id="seconds">00</div>
+          <div class="timer-label">ثانية</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Venue Details -->
+      <div class="section-subtitle">مكان الاحتفال</div>
+      <div class="venue-card">
+        <svg class="venue-illustration" viewBox="0 0 100 60" fill="none" stroke="#581825" stroke-width="1">
+          <path d="M10 50 L90 50 M15 50 L15 25 L50 10 L85 25 L85 50 M35 50 L35 35 L65 35 L65 50 M50 10 L50 50" />
+        </svg>
+        <div class="venue-title">Villa Medicea di Artimino</div>
+        <div class="venue-address">
+          VIA DI PAPA LEONE X, 28<br>
+          ARTIMINO, FLORENCIA
+        </div>
+      </div>
+
+      <!-- Menu Section -->
+      <div class="section-title-cursive">Reception to Follow</div>
+      <div class="menu-box">
+        <div class="menu-item">
+          <div class="menu-item-title">APERITIVO</div>
+          <div class="menu-item-desc">Selección de antipasti toscanos, Bruschetta, crostini e affettati misti</div>
+        </div>
+        <div class="menu-item">
+          <div class="menu-item-title">PRIMO</div>
+          <div class="menu-item-desc">Risotto al tartufo nero di Norcia con parmigiano reggiano 24 mesi</div>
+        </div>
+        <div class="menu-item">
+          <div class="menu-item-title">SECONDO</div>
+          <div class="menu-item-desc">Filetto di manzo alla griglia con salsa al vino rosso e verdure di stagione</div>
+        </div>
+        <div class="menu-item">
+          <div class="menu-item-title">DOLCE</div>
+          <div class="menu-item-desc">Torta nuziale con crema di mascarpone e frutti di bosco freschi</div>
+        </div>
+      </div>
+
+      <!-- Dress Code Section -->
+      <div class="section-title-cursive" style="font-size: 2.8rem;">Dress Code</div>
+      <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 10px;">
+        ندعوكم لارتداء الملابس الرسمية والأنيقة لمشاركتنا فرحتنا
+      </p>
+      <div style="font-family: 'Cinzel'; font-weight: 600; color: var(--burgundy); font-size: 0.9rem;">FORMAL ATTIRE</div>
+      <p style="font-size: 0.7rem; color: #999; font-style: italic; margin-top: 4px;">(Please avoid wearing white)</p>
+
+      <div class="divider"></div>
+
+      <!-- Gifts Section -->
+      <div class="section-subtitle">WEDDING REGISTRY</div>
+      <div class="section-title-cursive">Gifts</div>
+      <p style="font-size: 0.75rem; color: var(--text-muted); line-height: 1.6;">
+        حضوركم هو أجمل هدية لنا. ولكن إذا كنتم ترغبون في تقديم هدية، فيمكنكم المساهمة عبر التحويل البنكي:
+      </p>
+      
+      <div class="bank-box">
+        <strong>ACCOUNT HOLDER:</strong> SAM & SOFIA<br>
+        <strong>IBAN:</strong> ES00 0000 0000 0000 0000 0000<br>
+        <strong>REFERENCE:</strong> Sam & Sofia Wedding
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Transportation Section -->
+      <div class="section-subtitle">HOW TO GET THERE</div>
+      <div class="section-title-cursive">Transport</div>
+      <p style="font-size: 0.75rem; color: var(--text-muted); line-height: 1.6;">
+        قمنا بتوفير حافلات لنقل الضيوف من وسط المدينة إلى مكان الحفل:
+      </p>
+      <div style="margin-top: 15px; font-size: 0.8rem; color: var(--burgundy);">
+        <strong>تجمع الحافلات:</strong> Piazza della Signoria<br>
+        <strong>موعد التحرك:</strong> 16:00h
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- RSVP Section -->
+      <div class="section-title-cursive">Confirm your attendance</div>
+      
+      <form class="rsvp-form" id="rsvpForm" onsubmit="submitRSVP(event)">
+        <div class="form-group">
+          <label>الاسم بالكامل *</label>
+          <input type="text" class="form-control" required placeholder="اكتب اسمك هنا">
+        </div>
+
+        <div class="form-group">
+          <label>البريد الإلكتروني (اختياري)</label>
+          <input type="email" class="form-control" placeholder="your@email.com">
+        </div>
+
+        <div class="form-group">
+          <label>هل ستحضر؟ *</label>
+          <div class="radio-group">
+            <div class="btn-radio active" onclick="selectRadio(this, 'yes')">نعم، سأحضر!</div>
+            <div class="btn-radio" onclick="selectRadio(this, 'no')">لأسف، لن أستطيع</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>رسالة للعروسين (اختياري)</label>
+          <textarea class="form-control" rows="3" placeholder="اكتب تهنئة للعروسين..."></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit">تأكيد الحضور</button>
+      </form>
+
+      <!-- Thank You Card -->
+      <div class="thank-you-card">
+        <h3>Thank You</h3>
+        <p>
+          شكراً لمشاركتنا هذه اللحظات الخاصة.<br>
+          وجودكم يجعل يومنا أكثر جمالاً.
+        </p>
+        <div style="font-family: 'Alex Brush'; font-size: 1.8rem; color: var(--gold); margin-top: 15px;">Sam & Sofia</div>
+      </div>
+
     </div>
   </div>
 
-  <!-- Audio Toggle Floating Button -->
-  <button id="audioToggle" onclick="toggleAudio()" class="fixed top-5 right-5 z-50 bg-burgundy/90 text-cream border border-gold/50 p-3 rounded-full shadow-xl backdrop-blur hover:scale-105 transition-all">
-    <svg id="musicIcon" class="w-5 h-5 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12 0c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
-    </svg>
-  </button>
-
-  <!-- Audio Element (Soft Romantic Background Piano Track) -->
-  <audio id="bgMusic" loop preload="auto">
-    <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-wedding-piano-116262.mp3" type="audio/mpeg">
-  </audio>
-
-  <!-- Main Invitation Wrapper -->
-  <main class="max-w-xl mx-auto min-h-screen px-4 py-8 flex flex-col justify-between items-center text-center relative z-10">
-    
-    <!-- Hero Section -->
-    <header class="w-full pt-12 pb-8 fade-up">
-      <p class="text-xs sm:text-sm tracking-[0.25em] uppercase text-burgundy/80 mb-6 font-sans">
-        You are cordially invited to celebrate the wedding of
-      </p>
-      
-      <h1 class="font-script text-6xl sm:text-7xl text-burgundy my-2 leading-tight drop-shadow-sm">
-        Sam
-      </h1>
-      <span class="font-serif italic text-2xl text-gold font-light">& font-serif</span>
-      <h1 class="font-script text-6xl sm:text-7xl text-burgundy my-2 leading-tight drop-shadow-sm">
-        Sofia
-      </h1>
-
-      <p class="mt-8 text-sm sm:text-base leading-relaxed text-burgundy/90 max-w-md mx-auto italic px-4 font-light">
-        "We would like to invite you to celebrate with us the most special day of our lives. It would be an honor to have you present at this important moment."
-      </p>
-    </header>
-
-    <!-- Reveal Date Section (Interactive Scratch Cards) -->
-    <section class="w-full my-10 fade-up">
-      <div class="text-center mb-6">
-        <h2 class="font-script text-4xl text-burgundy mb-1">Reveal</h2>
-        <p class="text-xs uppercase tracking-[0.2em] text-gold-dark font-sans font-medium">Scratch to discover the date</p>
-      </div>
-
-      <div class="flex justify-center items-center gap-3 sm:gap-6 my-4">
-        <!-- Day Canvas -->
-        <div class="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full shadow-lg bg-white flex flex-col items-center justify-center border-2 border-gold/30">
-          <span class="text-2xl sm:text-3xl font-bold text-burgundy">10</span>
-          <span class="text-[10px] uppercase font-sans tracking-widest text-gold-dark">Day</span>
-          <canvas id="scratch1" width="112" height="112" class="scratch-canvas absolute top-0 left-0 rounded-full"></canvas>
-        </div>
-
-        <!-- Month Canvas -->
-        <div class="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full shadow-lg bg-white flex flex-col items-center justify-center border-2 border-gold/30">
-          <span class="text-xl sm:text-2xl font-bold text-burgundy">Sept</span>
-          <span class="text-[10px] uppercase font-sans tracking-widest text-gold-dark">Month</span>
-          <canvas id="scratch2" width="112" height="112" class="scratch-canvas absolute top-0 left-0 rounded-full"></canvas>
-        </div>
-
-        <!-- Year Canvas -->
-        <div class="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full shadow-lg bg-white flex flex-col items-center justify-center border-2 border-gold/30">
-          <span class="text-xl sm:text-2xl font-bold text-burgundy">2027</span>
-          <span class="text-[10px] uppercase font-sans tracking-widest text-gold-dark">Year</span>
-          <canvas id="scratch3" width="112" height="112" class="scratch-canvas absolute top-0 left-0 rounded-full"></canvas>
-        </div>
-      </div>
-
-      <p class="font-script text-2xl text-burgundy/80 mt-4">We're getting married!</p>
-    </section>
-
-    <!-- Countdown Timer Section -->
-    <section class="w-full my-12 fade-up">
-      <h2 class="font-script text-4xl text-burgundy mb-6">Countdown</h2>
-      <div class="grid grid-cols-4 gap-2 sm:gap-4 max-w-md mx-auto">
-        <div class="bg-white/80 p-3 sm:p-4 rounded-xl border border-gold/30 shadow-sm flex flex-col items-center">
-          <span id="cd-days" class="text-2xl sm:text-3xl font-bold text-burgundy">00</span>
-          <span class="text-[9px] sm:text-[11px] uppercase tracking-widest text-gold-dark font-sans mt-1">Days</span>
-        </div>
-        <div class="bg-white/80 p-3 sm:p-4 rounded-xl border border-gold/30 shadow-sm flex flex-col items-center">
-          <span id="cd-hours" class="text-2xl sm:text-3xl font-bold text-burgundy">00</span>
-          <span class="text-[9px] sm:text-[11px] uppercase tracking-widest text-gold-dark font-sans mt-1">Hours</span>
-        </div>
-        <div class="bg-white/80 p-3 sm:p-4 rounded-xl border border-gold/30 shadow-sm flex flex-col items-center">
-          <span id="cd-mins" class="text-2xl sm:text-3xl font-bold text-burgundy">00</span>
-          <span class="text-[9px] sm:text-[11px] uppercase tracking-widest text-gold-dark font-sans mt-1">Min</span>
-        </div>
-        <div class="bg-white/80 p-3 sm:p-4 rounded-xl border border-gold/30 shadow-sm flex flex-col items-center">
-          <span id="cd-secs" class="text-2xl sm:text-3xl font-bold text-burgundy">00</span>
-          <span class="text-[9px] sm:text-[11px] uppercase tracking-widest text-gold-dark font-sans mt-1">Sec</span>
-        </div>
-      </div>
-      <p class="text-xs uppercase tracking-[0.25em] text-burgundy/70 mt-4 font-sans">Until the big day</p>
-    </section>
-
-    <!-- Location Section -->
-    <section class="w-full my-12 fade-up">
-      <p class="text-xs uppercase tracking-[0.25em] text-gold-dark font-sans font-medium mb-3">The celebration will take place at</p>
-      
-      <!-- Architectural Illustration SVG -->
-      <div class="w-full max-w-xs mx-auto my-4 text-burgundy/80">
-        <svg viewBox="0 0 300 120" fill="none" stroke="currentColor" stroke-width="1.2" class="w-full h-auto">
-          <!-- Villa Outline Sketch -->
-          <path d="M 20 90 L 280 90 M 30 90 L 30 50 L 80 50 L 80 90 M 220 90 L 220 50 L 270 50 L 270 90 M 80 90 L 80 35 L 220 35 L 220 90" />
-          <path d="M 75 35 L 150 15 L 225 35" stroke-width="1.5" />
-          <path d="M 120 90 L 120 60 C 120 50, 180 50, 180 60 L 180 90" />
-          <!-- Pillars -->
-          <line x1="100" y1="35" x2="100" y2="90" stroke-dasharray="2 2" />
-          <line x1="200" y1="35" x2="200" y2="90" stroke-dasharray="2 2" />
-          <!-- Windows -->
-          <rect x="45" y="60" width="18" height="20" rx="2" />
-          <rect x="237" y="60" width="18" height="20" rx="2" />
-          <rect x="100" y="45" width="14" height="18" rx="1" />
-          <rect x="186" y="45" width="14" height="18" rx="1" />
-          <circle cx="150" cy="35" r="8" />
-        </svg>
-      </div>
-
-      <h2 class="font-serif text-2xl sm:text-3xl font-semibold text-burgundy">Villa Medicea di Artimino</h2>
-      <p class="text-xs tracking-wider text-burgundy/80 mt-1 uppercase font-sans">VIA DI PAPA LEONE X, 28<br>ARTIMINO, FLORENCIA</p>
-      <p class="font-script text-2xl text-gold-dark mt-3">September 10, 2027</p>
-    </section>
-
-    <!-- Reception & Menu Section -->
-    <section class="w-full my-12 fade-up">
-      <div class="bg-white/60 p-6 sm:p-8 rounded-2xl border border-gold/40 shadow-sm relative overflow-hidden">
-        
-        <!-- Ribbon SVG Decorative Border Top -->
-        <div class="w-24 mx-auto mb-4 text-burgundy">
-          <svg viewBox="0 0 100 30" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M 10 15 Q 25 5 50 15 Q 75 25 90 15 M 50 15 C 40 30 60 30 50 15 Z" />
-          </svg>
-        </div>
-
-        <h3 class="font-script text-4xl text-burgundy mb-6">Reception to Follow</h3>
-
-        <div class="space-y-6 text-burgundy-dark font-serif">
-          <div>
-            <h4 class="text-xs uppercase tracking-[0.2em] text-gold-dark font-sans font-semibold mb-1">Aperitivo</h4>
-            <p class="text-sm italic">Selección de antipasti toscanos</p>
-            <p class="text-xs text-burgundy/70">Bruschetta, crostini & affettati misti</p>
-          </div>
-
-          <div class="w-12 h-px bg-gold/30 mx-auto"></div>
-
-          <div>
-            <h4 class="text-xs uppercase tracking-[0.2em] text-gold-dark font-sans font-semibold mb-1">Primo</h4>
-            <p class="text-sm italic">Risotto al tartufo nero di Norcia</p>
-            <p class="text-xs text-burgundy/70">con parmigiano reggiano 24 mesi</p>
-          </div>
-
-          <div class="w-12 h-px bg-gold/30 mx-auto"></div>
-
-          <div>
-            <h4 class="text-xs uppercase tracking-[0.2em] text-gold-dark font-sans font-semibold mb-1">Secondo</h4>
-            <p class="text-sm italic">Filetto di manzo alla griglia</p>
-            <p class="text-xs text-burgundy/70">con salsa al vino rosso e verdure di stagione</p>
-          </div>
-
-          <div class="w-12 h-px bg-gold/30 mx-auto"></div>
-
-          <div>
-            <h4 class="text-xs uppercase tracking-[0.2em] text-gold-dark font-sans font-semibold mb-1">Dolce</h4>
-            <p class="text-sm italic">Torta nuziale con crema di mascarpone</p>
-            <p class="text-xs text-burgundy/70">e frutti di bosco freschi</p>
-          </div>
-        </div>
-
-        <p class="font-script text-2xl text-gold-dark mt-6">Vini della Tenuta</p>
-      </div>
-    </section>
-
-    <!-- Dress Code Section -->
-    <section class="w-full my-12 fade-up">
-      <h2 class="font-serif text-3xl font-medium text-burgundy mb-4">Dress Code</h2>
-      
-      <!-- Vector Illustration representation -->
-      <div class="flex justify-center items-center gap-4 py-4 text-burgundy/80">
-        <svg class="w-20 h-20" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1.2">
-          <!-- Tuxedo & Evening Gown Icon Sketch -->
-          <path d="M 25 20 L 40 20 L 45 40 L 32 90 L 20 90 L 10 40 Z" />
-          <path d="M 27 20 L 27 35 L 35 20" />
-          <path d="M 65 20 Q 75 10 85 20 L 90 90 L 60 90 Z" />
-          <path d="M 65 20 Q 75 30 85 20" />
-        </svg>
-      </div>
-
-      <p class="text-sm leading-relaxed text-burgundy/90 max-w-sm mx-auto font-light">
-        We invite you to dress elegantly and formally to celebrate this special day with us.
-      </p>
-      
-      <p class="font-serif text-lg font-semibold text-burgundy mt-3">Formal Attire</p>
-      <p class="font-script text-xl text-gold-dark italic">Please avoid wearing white</p>
-    </section>
-
-    <!-- Gifts / Registry Section -->
-    <section class="w-full my-12 fade-up">
-      <p class="text-xs uppercase tracking-[0.2em] text-gold-dark font-sans font-semibold mb-2">Wedding Registry</p>
-      <h2 class="font-serif text-3xl text-burgundy mb-4">Gifts</h2>
-      
-      <p class="text-sm leading-relaxed text-burgundy/90 max-w-sm mx-auto font-light mb-6">
-        Your presence is the best gift we could receive. However, if you wish to contribute to our new life together, you can do so via bank transfer.
-      </p>
-
-      <div class="bg-white/80 p-5 rounded-xl border border-gold/40 shadow-sm text-left max-w-md mx-auto space-y-2">
-        <p class="font-script text-2xl text-center text-burgundy mb-2">With all our love</p>
-        <div class="text-xs font-sans space-y-1 text-burgundy-dark/90">
-          <p><span class="font-semibold tracking-wider text-gold-dark">ACCOUNT HOLDER:</span> SAM & SOFIA</p>
-          <p><span class="font-semibold tracking-wider text-gold-dark">IBAN:</span> ES00 0000 0000 0000 0000 0000</p>
-          <p><span class="font-semibold tracking-wider text-gold-dark">REFERENCE:</span> Sam & Sofia Wedding</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Transport Section -->
-    <section class="w-full my-12 fade-up">
-      <p class="text-xs uppercase tracking-[0.2em] text-gold-dark font-sans font-semibold mb-1">How To Get There</p>
-      <h2 class="font-serif text-3xl text-burgundy mb-4">Transport</h2>
-
-      <p class="text-sm leading-relaxed text-burgundy/90 max-w-sm mx-auto font-light mb-6">
-        We have organized buses from the center of Florence to the villa so you can enjoy the celebration without worries.
-      </p>
-
-      <div class="grid grid-cols-2 gap-4 max-w-sm mx-auto text-center font-sans">
-        <div class="bg-white/70 p-4 rounded-xl border border-gold/30">
-          <p class="text-[10px] uppercase tracking-widest text-gold-dark font-semibold">Bus Departure</p>
-          <p class="text-sm font-bold text-burgundy mt-1">Piazza della Signoria</p>
-          <p class="text-xs text-burgundy/80 mt-1">16:00h</p>
-        </div>
-        <div class="bg-white/70 p-4 rounded-xl border border-gold/30">
-          <p class="text-[10px] uppercase tracking-widest text-gold-dark font-semibold">Return To Florence</p>
-          <p class="text-sm font-bold text-burgundy mt-1">Villa Medicea</p>
-          <p class="text-xs text-burgundy/80 mt-1">02:00h</p>
-        </div>
-      </div>
-
-      <p class="font-script text-xl text-burgundy/80 mt-4 italic">Please indicate in your RSVP if you need transport</p>
-    </section>
-
-    <!-- RSVP Section -->
-    <section class="w-full my-12 fade-up" id="rsvpSection">
-      <div class="bg-white/80 p-6 sm:p-8 rounded-2xl border border-gold/40 shadow-lg">
-        
-        <div class="inline-flex items-center gap-2 bg-cream-soft px-3 py-1 rounded-full text-[11px] text-burgundy/80 font-sans mb-4 border border-gold/20">
-          <svg class="w-3.5 h-3.5 text-gold-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-          </svg>
-          Confirm your response by August 10, 2027
-        </div>
-
-        <h2 class="font-script text-4xl text-burgundy mb-6">Confirm your attendance</h2>
-
-        <form id="rsvpForm" onsubmit="handleRSVP(event)" class="space-y-4 text-left font-sans">
-          
-          <div>
-            <label class="block text-xs font-semibold uppercase tracking-wider text-burgundy mb-1">Full Name *</label>
-            <input type="text" required placeholder="Your name" class="w-full px-4 py-3 bg-cream/50 border border-gold/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-gold/50 text-sm text-burgundy">
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold uppercase tracking-wider text-burgundy mb-1">Email (Optional)</label>
-            <input type="email" placeholder="your@email.com" class="w-full px-4 py-3 bg-cream/50 border border-gold/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-gold/50 text-sm text-burgundy">
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold uppercase tracking-wider text-burgundy mb-2">Will you attend? *</label>
-            <div class="grid grid-cols-2 gap-3">
-              <button type="button" onclick="setAttendance(true)" id="btnYes" class="py-3 px-4 border border-gold/50 rounded-xl text-xs font-medium text-burgundy bg-white hover:bg-gold/10 transition-all text-center">
-                Yes, I'll be there!
-              </button>
-              <button type="button" onclick="setAttendance(false)" id="btnNo" class="py-3 px-4 border border-gold/50 rounded-xl text-xs font-medium text-burgundy bg-white hover:bg-gold/10 transition-all text-center">
-                No, I can't make it
-              </button>
-            </div>
-            <input type="hidden" id="attendanceInput" required>
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold uppercase tracking-wider text-burgundy mb-1">Message for the couple (Optional)</label>
-            <textarea rows="3" placeholder="Write us a few words..." class="w-full px-4 py-3 bg-cream/50 border border-gold/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-gold/50 text-sm text-burgundy"></textarea>
-          </div>
-
-          <button type="submit" class="w-full py-3.5 bg-burgundy text-cream font-medium rounded-xl shadow-md hover:bg-burgundy-dark transition-all flex items-center justify-center gap-2 text-sm tracking-wider uppercase">
-            <svg class="w-4 h-4 text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-            </svg>
-            Confirm
-          </button>
-        </form>
-
-        <!-- Success Message Placeholder -->
-        <div id="rsvpSuccess" class="hidden py-8 text-center space-y-3">
-          <div class="w-12 h-12 bg-gold/20 text-gold-dark rounded-full flex items-center justify-center mx-auto">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-            </svg>
-          </div>
-          <h3 class="font-script text-3xl text-burgundy">Thank You!</h3>
-          <p class="text-sm text-burgundy/80 font-sans">Your response has been successfully received.</p>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- Thank You Card Section -->
-    <footer class="w-full my-12 fade-up">
-      <div class="bg-burgundy text-cream p-8 sm:p-10 rounded-3xl border-scallop shadow-2xl relative">
-        <h2 class="font-script text-5xl text-gold-light mb-4">Thank You</h2>
-        <p class="text-sm leading-relaxed max-w-xs mx-auto font-light opacity-90">
-          For joining us on this special day. Your presence is the best gift we could receive.
-        </p>
-        <p class="font-script text-3xl text-gold-light mt-6">Sam & Sofia</p>
-      </div>
-    </footer>
-
-  </main>
-
   <script>
-    /* -------------------------------------------------------------
-       1. Curtain Curtain Opening Logic
-    ------------------------------------------------------------- */
-    window.addEventListener('load', () => {
-      // Auto open curtain after 600ms on load or on click
-      setTimeout(openCurtains, 600);
+    // 1. Curtain Animation Logic
+    function openCurtain() {
+      const curtain = document.getElementById('curtain-overlay');
+      const app = document.getElementById('app');
       
-      // Initialize Scratch Canvases
-      initScratchCanvas('scratch1', '10');
-      initScratchCanvas('scratch2', 'Sept');
-      initScratchCanvas('scratch3', '2027');
+      curtain.classList.add('open');
+      app.classList.add('active');
 
-      // Start Countdown
-      startCountdown();
-
-      // Intersection Observer for scroll animations
-      initScrollAnimations();
-    });
-
-    let curtainOpened = false;
-    function openCurtains() {
-      if (!curtainOpened) {
-        document.body.classList.add('curtains-open');
-        curtainOpened = true;
-        
-        // Remove curtain overlay from DOM after animation completes to allow interactions
-        setTimeout(() => {
-          const overlay = document.getElementById('curtainOverlay');
-          if (overlay) overlay.style.display = 'none';
-        }, 2300);
-      }
+      // Trigger initial scratch canvas setups
+      setTimeout(() => {
+        initScratchCanvas('canvas1');
+        initScratchCanvas('canvas2');
+        initScratchCanvas('canvas3');
+      }, 500);
     }
 
-    document.getElementById('curtainOverlay').addEventListener('click', openCurtains);
-
-    /* -------------------------------------------------------------
-       2. Background Audio Control
-    ------------------------------------------------------------- */
-    const bgMusic = document.getElementById('bgMusic');
-    let isPlaying = false;
-
-    function toggleAudio() {
-      if (isPlaying) {
-        bgMusic.pause();
-        isPlaying = false;
-        document.getElementById('audioToggle').classList.remove('animate-pulse');
-      } else {
-        bgMusic.play().then(() => {
-          isPlaying = true;
-          document.getElementById('audioToggle').classList.add('animate-pulse');
-        }).catch(e => console.log("Audio playback blocked by browser settings", e));
-      }
-    }
-
-    /* -------------------------------------------------------------
-       3. Scratch Card Effect (HTML5 Canvas)
-    ------------------------------------------------------------- */
-    let revealedCards = 0;
-
-    function initScratchCanvas(id, text) {
+    // 2. Scratch Cards Canvas Logic
+    function initScratchCanvas(id) {
       const canvas = document.getElementById(id);
       const ctx = canvas.getContext('2d');
-      const width = canvas.width;
-      const height = canvas.height;
+      const rect = canvas.getBoundingClientRect();
+      
+      canvas.width = rect.width;
+      canvas.height = rect.height;
 
-      // Draw Gold Metallic Gradient Cover
-      const grad = ctx.createLinearGradient(0, 0, width, height);
+      // Draw Gold Metallic Gradient Coating
+      const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
       grad.addColorStop(0, '#D4AF37');
       grad.addColorStop(0.5, '#FFF2A3');
-      grad.addColorStop(1, '#AA7C11');
+      grad.addColorStop(1, '#AA820A');
       
       ctx.fillStyle = grad;
-      ctx.beginPath();
-      ctx.arc(width / 2, height / 2, width / 2, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Add "Scratch" text label on top of gold
-      ctx.fillStyle = '#5A0E17';
-      ctx.font = '600 10px Montserrat';
+      // Add "Scratch Me" text icon
+      ctx.fillStyle = '#581825';
+      ctx.font = '10px Montserrat';
       ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('SCRATCH', width / 2, height / 2);
+      ctx.fillText('امسح', canvas.width / 2, canvas.height / 2 + 3);
 
       let isDrawing = false;
-      let scratchedPercent = 0;
 
       function scratch(e) {
         if (!isDrawing) return;
-        const rect = canvas.getBoundingClientRect();
-        const x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
-        const y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
+        
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const cRect = canvas.getBoundingClientRect();
+        
+        const x = clientX - cRect.left;
+        const y = clientY - cRect.top;
 
         ctx.globalCompositeOperation = 'destination-out';
         ctx.beginPath();
-        ctx.arc(x, y, 16, 0, Math.PI * 2);
+        ctx.arc(x, y, 12, 0, Math.PI * 2);
         ctx.fill();
 
-        checkScratchProgress();
+        checkScratchPercentage();
       }
 
-      function checkScratchProgress() {
-        if (scratchedPercent > 40) return; // Already revealed
-
-        const imageData = ctx.getImageData(0, 0, width, height);
-        const pixels = imageData.data;
-        let transparentPixels = 0;
-
-        for (let i = 3; i < pixels.length; i += 4) {
-          if (pixels[i] === 0) transparentPixels++;
+      function checkScratchPercentage() {
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        let clearPixels = 0;
+        for (let i = 3; i < imageData.data.length; i += 4) {
+          if (imageData.data[i] === 0) clearPixels++;
         }
-
-        scratchedPercent = (transparentPixels / (pixels.length / 4)) * 100;
-
-        if (scratchedPercent > 35) {
-          // Fully clear canvas smoothly
-          ctx.clearRect(0, 0, width, height);
-          revealedCards++;
-          
-          // Trigger Confetti explosion when all cards scratched
-          if (revealedCards === 3 && typeof confetti === 'function') {
-            triggerConfetti();
-          }
+        
+        // If 40% cleared, auto clear rest & fire confetti
+        if (clearPixels / (canvas.width * canvas.height) > 0.4) {
+          canvas.style.transition = 'opacity 0.5s';
+          canvas.style.opacity = '0';
+          setTimeout(() => canvas.remove(), 500);
+          triggerConfetti();
         }
       }
 
-      // Event Listeners for Touch and Mouse
-      canvas.addEventListener('mousedown', (e) => { isDrawing = true; scratch(e); });
-      canvas.addEventListener('mousemove', scratch);
+      canvas.addEventListener('mousedown', () => isDrawing = true);
       canvas.addEventListener('mouseup', () => isDrawing = false);
-      canvas.addEventListener('mouseleave', () => isDrawing = false);
-
-      canvas.addEventListener('touchstart', (e) => { isDrawing = true; scratch(e); }, { passive: true });
-      canvas.addEventListener('touchmove', scratch, { passive: true });
+      canvas.addEventListener('mousemove', scratch);
+      
+      canvas.addEventListener('touchstart', () => isDrawing = true);
       canvas.addEventListener('touchend', () => isDrawing = false);
+      canvas.addEventListener('touchmove', scratch);
     }
 
-    /* -------------------------------------------------------------
-       4. Confetti Effect Trigger
-    ------------------------------------------------------------- */
+    // 3. Confetti Effect
     function triggerConfetti() {
-      confetti({
-        particleCount: 80,
-        spread: 70,
-        origin: { y: 0.6 },
-        colors: ['#5A0E17', '#C5A059', '#E6CA85', '#FAF7F2']
-      });
-    }
-
-    /* -------------------------------------------------------------
-       5. Countdown Timer Logic (Target: Sept 10, 2027)
-    ------------------------------------------------------------- */
-    function startCountdown() {
-      const targetDate = new Date('September 10, 2027 16:00:00').getTime();
-
-      function update() {
-        const now = new Date().getTime();
-        const difference = targetDate - now;
-
-        if (difference > 0) {
-          const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-          const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-          const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-          const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-
-          document.getElementById('cd-days').innerText = String(days).padStart(2, '0');
-          document.getElementById('cd-hours').innerText = String(hours).padStart(2, '0');
-          document.getElementById('cd-mins').innerText = String(minutes).padStart(2, '0');
-          document.getElementById('cd-secs').innerText = String(seconds).padStart(2, '0');
-        }
-      }
-
-      update();
-      setInterval(update, 1000);
-    }
-
-    /* -------------------------------------------------------------
-       6. Attendance Buttons & Form Handler
-    ------------------------------------------------------------- */
-    function setAttendance(willAttend) {
-      const btnYes = document.getElementById('btnYes');
-      const btnNo = document.getElementById('btnNo');
-      const input = document.getElementById('attendanceInput');
-
-      if (willAttend) {
-        btnYes.className = 'py-3 px-4 border-2 border-burgundy rounded-xl text-xs font-bold text-white bg-burgundy shadow-sm text-center';
-        btnNo.className = 'py-3 px-4 border border-gold/50 rounded-xl text-xs font-medium text-burgundy bg-white hover:bg-gold/10 transition-all text-center';
-        input.value = 'Yes';
-      } else {
-        btnNo.className = 'py-3 px-4 border-2 border-burgundy rounded-xl text-xs font-bold text-white bg-burgundy shadow-sm text-center';
-        btnYes.className = 'py-3 px-4 border border-gold/50 rounded-xl text-xs font-medium text-burgundy bg-white hover:bg-gold/10 transition-all text-center';
-        input.value = 'No';
-      }
-    }
-
-    function handleRSVP(e) {
-      e.preventDefault();
-      document.getElementById('rsvpForm').classList.add('hidden');
-      document.getElementById('rsvpSuccess').classList.remove('hidden');
       if (typeof confetti === 'function') {
-        triggerConfetti();
+        confetti({
+          particleCount: 40,
+          spread: 60,
+          origin: { y: 0.7 },
+          colors: ['#581825', '#D4AF37', '#7A2433']
+        });
       }
     }
 
-    /* -------------------------------------------------------------
-       7. Scroll Entrance Animations
-    ------------------------------------------------------------- */
-    function initScrollAnimations() {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-          }
-        });
-      }, { threshold: 0.1 });
+    // 4. Countdown Timer Logic (Target Date: Sept 10, 2027)
+    const targetDate = new Date('September 10, 2027 18:00:00').getTime();
 
-      document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const distance = targetDate - now;
+
+      if (distance < 0) return;
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      document.getElementById('days').innerText = days < 10 ? '0' + days : days;
+      document.getElementById('hours').innerText = hours < 10 ? '0' + hours : hours;
+      document.getElementById('minutes').innerText = minutes < 10 ? '0' + minutes : minutes;
+      document.getElementById('seconds').innerText = seconds < 10 ? '0' + seconds : seconds;
+    }
+
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+
+    // 5. RSVP Radio Button Selector
+    function selectRadio(element, val) {
+      document.querySelectorAll('.btn-radio').forEach(btn => btn.classList.remove('active'));
+      element.classList.add('active');
+    }
+
+    // 6. Form Submission Handler
+    function submitRSVP(e) {
+      e.preventDefault();
+      alert('تم إرسال تأكيد الحضور بنجاح! شكراً لك.');
     }
   </script>
 </body>
