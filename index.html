@@ -62,54 +62,74 @@
       border-radius: 3px;
     }
 
-    /* Curtain Animations */
-    .curtain-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 100;
-      pointer-events: none;
-      display: flex;
-      overflow: hidden;
-    }
+    /* Curtain Theater Overlay - Realistic Curtain Opening */
+.curtain-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 100;
+  cursor: pointer;
+  overflow: hidden;
+  display: flex;
+}
 
-    .curtain-panel {
-      width: 50vw;
-      height: 100vh;
-      background-color: #5A0E17;
-      background-image: repeating-linear-gradient(
-        90deg,
-        #3D070E,
-        #3D070E 15px,
-        #5A0E17 15px,
-        #5A0E17 35px,
-        #7A1823 35px,
-        #7A1823 50px
-      );
-      box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.8);
-      transition: transform 2.2s cubic-bezier(0.77, 0, 0.175, 1);
-      position: relative;
-    }
+.curtain-panel {
+  width: 50vw;
+  height: 100vh;
+  background-color: #5A0E17;
+  /* خطوط وتظليل إيهامي لثنيات القماش */
+  background-image: repeating-linear-gradient(
+    90deg,
+    #2c0509 0px,
+    #3D070E 12px,
+    #5A0E17 25px,
+    #7A1823 40px,
+    #3D070E 55px
+  );
+  box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.85);
+  transition: transform 1.8s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.5s ease 1.3s;
+  position: relative;
+  will-change: transform;
+}
 
-    .curtain-panel.left {
-      transform-origin: left center;
-      border-right: 2px solid #C5A059;
-    }
+/* التنسيق الجانبي للستائر عند السحب */
+.curtain-panel.left {
+  transform-origin: top left;
+  border-right: 3px solid #C5A059;
+}
 
-    .curtain-panel.right {
-      transform-origin: right center;
-      border-left: 2px solid #C5A059;
-    }
+.curtain-panel.right {
+  transform-origin: top right;
+  border-left: 3px solid #C5A059;
+}
 
-    .curtains-open .curtain-panel.left {
-      transform: translateX(-100%);
-    }
+/* حركة الفتح السلسة والانكماش على الجوانب */
+.curtains-open .curtain-panel.left {
+  transform: translateX(-85%) scaleX(0.3) skewY(-5deg);
+  opacity: 0.9;
+}
 
-    .curtains-open .curtain-panel.right {
-      transform: translateX(100%);
-    }
+.curtains-open .curtain-panel.right {
+  transform: translateX(85%) scaleX(0.3) skewY(5deg);
+  opacity: 0.9;
+}
+
+/* طبقة ظل خفيفة خلف الستائر لإضافة عمق سينمائي عند الفتح */
+.curtain-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.4) 100%);
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 1.5s ease;
+}
+
+.curtains-open.curtain-container::before {
+  opacity: 0;
+}
 
     /* Gold Gradient Canvas overlay look */
     .scratch-canvas {
@@ -487,22 +507,32 @@
       initScrollAnimations();
     });
 
-    let curtainOpened = false;
-    function openCurtains() {
-      if (!curtainOpened) {
-        document.body.classList.add('curtains-open');
-        curtainOpened = true;
-        
-        // Remove curtain overlay from DOM after animation completes to allow interactions
-        setTimeout(() => {
-          const overlay = document.getElementById('curtainOverlay');
-          if (overlay) overlay.style.display = 'none';
-        }, 2300);
-      }
+let curtainOpened = false;
+
+function openCurtains() {
+  if (!curtainOpened) {
+    const overlay = document.getElementById('curtainOverlay');
+    overlay.classList.add('curtains-open');
+    curtainOpened = true;
+    
+    // تشغيل الصوت تلقائياً عند النقر لفتح الستار إذا كان الزر مفعلاً
+    if (typeof toggleAudio === 'function' && !isPlaying) {
+      toggleAudio();
     }
+    
+    // إخفاء الستائر تماماً من الشاشة بعد انتهاء الحركة
+    setTimeout(() => {
+      if (overlay) overlay.style.display = 'none';
+    }, 2000);
+  }
+}
 
-    document.getElementById('curtainOverlay').addEventListener('click', openCurtains);
+// الفتح عند النقر في أي مكان على الشاشة أو عند تحميل الصفحة تلقائياً
+document.getElementById('curtainOverlay').addEventListener('click', openCurtains);
 
+window.addEventListener('load', () => {
+  setTimeout(openCurtains, 800);
+});
     /* -------------------------------------------------------------
        2. Background Audio Control
     ------------------------------------------------------------- */
